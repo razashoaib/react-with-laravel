@@ -14,10 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/countries', ['uses' => 'API\CountriesController@index']);
+Route::post('/login', ['uses' => 'AuthController@login']);
+Route::post('/register', ['uses' => 'AuthController@register']);
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/countries', ['uses' => 'API\CountriesController@index'])->middleware('auth:api');;
 
 

@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/{path?}', function () {
     return view('react');
-});
-
-Route::get('/react', function () {
-    return view('react');
-});
+})->where('path', '.*');

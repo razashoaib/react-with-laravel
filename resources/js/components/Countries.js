@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import {withRouter} from 'react-router-dom';
 import axios from 'axios';
 
 class Countries extends PureComponent {
@@ -16,25 +17,39 @@ class Countries extends PureComponent {
 
     handleSearchBtnClick = async () => {
         const { query } = this.state;
-        const response = await axios.request({
-            url: `http://192.168.64.2:8081/api/countries?query=${query}`,
-            method: 'GET'
-        });
-        this.setState({
-            countries: response.data
-        });
+        try {
+            const response = await axios.request({
+                url: `http://localhost:8081/api/countries?query=${query}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': window.sessionStorage.getItem('token')
+                }
+            });
+            this.setState({
+                countries: response.data
+            });
+        } catch (e) {
+            window.sessionStorage.clear();
+            this.props.history.push('/login');
+        }
     };
-
 
     render() {
         const { countries } = this.state;
-        const myStyle = {
-            margin: '5px'
+        const buttonStyle = {
+            display: 'inline-block',
+            marginLeft: '5px',
+            marginTop: '-3px'
+        };
+        const inputStyle = {
+            display: 'inline-block',
+            marginLeft: '5px',
+            width: '405px'
         };
         return(
             <div>
-                <input onChange={(val) => this.handleInputChange(val)} className='form-control' />
-                <button style={myStyle} type="button" onClick={() => this.handleSearchBtnClick()} className="btn btn-primary" >Search</button>
+                <input style={inputStyle} onChange={(val) => this.handleInputChange(val)} className='form-control' />
+                <button style={buttonStyle} type="button" onClick={() => this.handleSearchBtnClick()} className="btn btn-primary" >Search</button>
                 <ul>
                     {countries.map( (val) => {
                         return (<li key={val}>{val}</li>);
@@ -45,4 +60,4 @@ class Countries extends PureComponent {
     }
 }
 
-export default Countries;
+export default withRouter(Countries);
